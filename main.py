@@ -18,7 +18,7 @@ headers = {
 }
 
 def tiki(phone):
-    if phone == "0395524153" and "84395524153":
+    if phone == "0395524153" or phone == "84395524153":
         return "Spam Số Tao Làm Lồn À!"
     else:
         try:
@@ -31,7 +31,7 @@ def tiki(phone):
             return "Lỗi Không Xác Định!"
 
 def grab_food(phone):
-    if phone == "0395524153" and "84395524153":
+    if phone == "0395524153" or phone == "84395524153":
         return "Spam Số Tao Làm Lồn À!"
     else:
         try:
@@ -51,7 +51,7 @@ def grab_food(phone):
             return "Lỗi Không Xác Định!"
     
 def bach_hoa_xanh(phone):
-    if phone == "0395524153" and "84395524153":
+    if phone == "0395524153" or phone == "84395524153":
         return "Spam Số Tao Làm Lồn À!"
     else:
         try:
@@ -66,7 +66,7 @@ def bach_hoa_xanh(phone):
             return "Lỗi Không Xác Định!" 
     
 def meta_vn(phone):
-    if phone == "0395524153" and "84395524153":
+    if phone == "0395524153" or phone == "84395524153":
         return "Spam Số Tao Làm Lồn À!"
     else:
         try:
