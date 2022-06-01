@@ -1,46 +1,98 @@
 from typing import Optional
 from fastapi import FastAPI
 import requests
+import random
+def random_id(length):
+    number = '0123456789'
+    alpha = 'abcdefghijklmnopqrstuvwxyz'
+    id = ''
+    for i in range(0,length,2):
+        id += random.choice(number)
+        id += random.choice(alpha)
+    return id
+
 app = FastAPI()
 
-def get_token(cookies):
-    headers = {
-        'authority': 'www.facebook.com',
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'accept-language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
-        'cookie': cookies,
-        'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'none',
-        'sec-fetch-user': '?1',
-        'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36',
-    }
-    try:
-        get = requests.get('https://www.facebook.com/dialog/oauth?client_id=124024574287414&redirect_uri=https://www.instagram.com/accounts/signup/&&scope=email&response_type=token', headers=headers).url
-        access_ = get.split('#access_token=')[1].split('&data_access')[0]
-        return access_
-    except:
-        return 'Không Thể Get Token!'
+headers = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36',
+}
 
-def like_ig(id_post, cookies):
+def tiki(phone):
     try:
-        token=cookies.split('csrftoken=')[1].split(';')[0]
-        get_id = requests.post('https://www.instagram.com/p/'+id_post+'/',headers={'Authority': 'www.instagram.com','Content-Length': '0','Sec-Ch-Ua': '\"Google Chrome\";v=\"93\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"93\"','X-Ig-App-Id': '1217981644879628','Sec-Ch-Ua-Mobile': '?1','X-Instagram-Ajax': 'd26a8ffbcd2b','Content-Type': 'application/x-www-form-urlencoded','Accept': '*/*','X-Requested-With': 'XMLHttpRequest','X-Asbd-Id': '198387','X-Csrftoken': token,'Sec-Ch-Ua-Platform': '\"Android\"','Origin': 'https://www.instagram.com','Sec-Fetch-Site': 'same-origin','Sec-Fetch-Mode': 'cors','Sec-Fetch-Dest': 'empty','Referer': 'https://www.instagram.com/','Accept-Language': 'en-US,en;q=0.9,vi;q=0.8','Cookie': cookies}).text
-        id_lam = get_id.split('content="instagram://media?id=')[1].split('"/>\n<meta')[0]
-        like = requests.post('https://www.instagram.com/web/likes/'+str(id_lam)+'/like/',headers={'Authority': 'www.instagram.com','Content-Length': '0','Sec-Ch-Ua': '\"Google Chrome\";v=\"93\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"93\"','X-Ig-App-Id': '1217981644879628','Sec-Ch-Ua-Mobile': '?1','X-Instagram-Ajax': 'd26a8ffbcd2b','Content-Type': 'application/x-www-form-urlencoded','Accept': '*/*','X-Requested-With': 'XMLHttpRequest','X-Asbd-Id': '198387','X-Csrftoken': token,'Sec-Ch-Ua-Platform': '\"Android\"','Origin': 'https://www.instagram.com','Sec-Fetch-Site': 'same-origin','Sec-Fetch-Mode': 'cors','Sec-Fetch-Dest': 'empty','Referer': 'https://www.instagram.com/','Accept-Language': 'en-US,en;q=0.9,vi;q=0.8','Cookie': cookies,}).json()
-        return {'id': id_lam, 'msg': like}
+        json_data = {
+                'phone_number': phone,
+            }
+        response_tiki = requests.post('https://tiki.vn/api/v2/customers/otp_codes', headers=headers, json=json_data).text
+        return response_tiki
     except:
-        return {id_post: 'Thất Bại'}
-@app.get("/get_token")
-def read_item(cookies: Optional[str] = None):
-    access_token = get_token(cookies)
-    return {"access_token": access_token}
+        return "Lỗi Không Xác Định!"
 
-@app.post("/like_ig/{id_post}")
-def read_item(id_post: str, cookies: Optional[str] = None):
-    like = like_ig(id_post, cookies)
-    return like
+def grab_food(phone):
+    try:
+        json_data = {
+            'client_id': random_id(32),
+            'ctx_id': random_id(32),
+            'transaction_ctx': None,
+            'country_code': 'VN',
+            'method': 'SMS',
+            'num_digits': 6,
+            'scope': 'openid profile.read foodweb.order foodweb.rewards foodweb.get_enterprise_profile',
+            'phone_number': phone,
+        }
+        response_grab_food = requests.post('https://partner-api.grab.com/grabid/v1/oauth2/otp', headers=headers, json=json_data).text
+        return response_grab_food
+    except:
+        return "Lỗi Không Xác Định!"
+    
+def bach_hoa_xanh(phone):
+    try:
+        data = {
+            'phone': phone,
+            'objectId': random_id(36),
+            'type': '4',
+        }
+        response_bach_hoa_xanh = requests.post('https://www.bachhoaxanh.com/aj/Customer/SendOTP', headers=headers, data=data).text
+        return response_bach_hoa_xanh
+    except:
+        return "Lỗi Không Xác Định!" 
+    
+def meta_vn(phone):
+    try:
+        params = {
+            'api_mode': '1',
+        }
+
+        json_data = {
+            'api_args': {
+                'lgUser': phone,
+                'act': 'send',
+                'type': 'phone',
+            },
+            'api_method': 'CheckExist',
+        }
+
+        response_meta_vn = requests.post('https://meta.vn/app_scripts/pages/AccountReact.aspx', params=params, headers=headers, json=json_data).text
+        return response_meta_vn
+    except:
+        return "Lỗi Không Xác Định!"    
+    
+
+@app.post("/tiki")
+def read_item(phone: Optional[str] = None):
+    done = tiki(phone)
+    return done
+
+@app.post("/grab-food")
+def read_item(phone: Optional[str] = None):
+    done = grab_food(phone)
+    return done
+
+@app.post("/bach-hoa-xanh")
+def read_item(phone: Optional[str] = None):
+    done = bach_hoa_xanh(phone)
+    return done
+
+@app.post("/meta-vn")
+def read_item(phone: Optional[str] = None):
+    done = meta_vn(phone)
+    return done
