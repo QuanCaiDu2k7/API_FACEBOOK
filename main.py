@@ -9,9 +9,6 @@ from faker import Faker
 import re
 app = FastAPI()
 
-def user_agent():
-    headers = Headers(headers=True).generate()['User-Agent']
-    return headers
 
 
 def fakeEmail(domain):
@@ -112,27 +109,6 @@ def check_hot(mail_input):
     except:
         return json.dumps({'data':{'mail': mail_input, 'status': 'Wrong format!'}})
 
-
-def valid(mail):
-    try:
-        br = mechanize.Browser()
-        br.set_handle_robots(False)
-        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(),max_time=1)
-        br.addheaders = [('User-Agent', user_agent())]
-        br.open('https://m.facebook.com/login/identify')
-        br._factory.is_html = True
-        br.select_form(nr=0)
-        br.form['email'] = mail
-        br.submit()
-        valid = br.response().read().decode('utf-8')
-        done = re.search("Số điện thoại hoặc email bạn nhập không khớp với tài khoản nào. Hãy thử lại", valid)
-        if done == None:
-            return json.dumps({'data':{'mail': mail, 'status': 'Valid Email'}})
-        else:
-            return json.dumps({'data':{'mail': mail, 'status': 'Invalid Email'}})
-    except:
-        return json.dumps({'data':{'error': 'There Is No Internet Connection!'}})
-        
 @app.post("/get_mail")
 def read_item(domain: Optional[str] = None):
     done = fakeEmail(domain)
@@ -146,10 +122,5 @@ def read_item(mail: Optional[str] = None):
 @app.post("/hotmail_checker")
 def read_item(mail: Optional[str] = None):
     done = check_hot(mail)
-    return done
-
-@app.post("/valid_facebook")
-def read_item(mail: Optional[str] = None):
-    done = valid(mail)
     return done
 
