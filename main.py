@@ -3,9 +3,6 @@ from fastapi import FastAPI
 import requests
 import random
 import json
-from fake_headers import Headers
-import mechanize
-from faker import Faker
 import re
 app = FastAPI()
 
