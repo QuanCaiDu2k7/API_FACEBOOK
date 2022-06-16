@@ -136,10 +136,6 @@ def valid(mail):
     except:
         return json.dumps({'data':{'error': 'There Is No Internet Connection!'}})
 
-@app.post("/get_mail")
-def read_item(domain: Optional[str] = None, total: Optional[int] = None):
-    done = fakeEmail(domain, total)
-    return done
 
 @app.post("/yahoo_checker")
 def read_item(mail: Optional[str] = None):
