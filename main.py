@@ -9,6 +9,21 @@ from typing import Optional
 from fastapi import FastAPI
 app = FastAPI()
 
+
+def ip():
+    try:
+        headers = Headers(headers=True).generate()['User-Agent']
+        br = mechanize.Browser()
+        br.set_handle_robots(False)
+        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(),max_time=1)
+        br.addheaders = [('User-Agent', headers)]
+        br.open('http://httpbin.org/ip')
+        code = br.response().read().decode('utf-8')
+        return code
+    except:
+        return json.dumps({'error':{'status': 'Server Error!'}})
+    
+    
 def user_agent():
     headers = Headers(headers=True).generate()['User-Agent']
     return headers
@@ -181,6 +196,11 @@ def get_code(mail):
     except:
         return json.dumps({'error':{'mail': mail, 'status': 'Invalid Email'}})
     
+@app.post("/get_ip")
+def read_item():
+    done = get_ip()
+    return done
+
 @app.post("/fake_useragent")
 def read_item():
     done = user_agent()
