@@ -11,11 +11,6 @@ from fastapi.responses import UJSONResponse
 
 app = FastAPI()
 
-
-@app.get("/items/", response_class=UJSONResponse)
-async def read_items():
-    return [{"item_id": "Foo"}]
-
 def user_agent():
     headers = Headers(headers=True).generate()['User-Agent']
     return headers
@@ -140,7 +135,7 @@ def valid(mail):
     except:
         return json.dumps({'data':{'error': 'There Is No Internet Connection!'}})
 
-@app.post("/get_mail")
+@app.post("/get_mail", response_class=UJSONResponse)
 def read_item(domain: Optional[str] = None, total: Optional[int] = None):
     done = fakeEmail(domain, total)
     return done
