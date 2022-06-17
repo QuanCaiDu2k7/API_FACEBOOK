@@ -1,14 +1,17 @@
-from typing import Optional
-from fastapi import FastAPI
 import requests
-import random
+import re
 import json
 import mechanize
 from faker import Faker
+import random
 from fake_headers import Headers
-import re
+from typing import Optional
+from fastapi import FastAPI
 app = FastAPI()
 
+def user_agent():
+    headers = Headers(headers=True).generate()['User-Agent']
+    return headers
 
 
 def fakeEmail(domain):
@@ -115,7 +118,7 @@ def valid(mail):
         br = mechanize.Browser()
         br.set_handle_robots(False)
         br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(),max_time=1)
-        br.addheaders = [('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:101.0) Gecko/20100101 Firefox/101.0')]
+        br.addheaders = [('User-Agent', user_agent())]
         br.open('https://m.facebook.com/login/identify')
         br._factory.is_html = True
         br.select_form(nr=0)
@@ -129,10 +132,10 @@ def valid(mail):
             return json.dumps({'data':{'mail': mail, 'status': 'Invalid Email'}})
     except:
         return json.dumps({'data':{'error': 'There Is No Internet Connection!'}})
-        
+
 @app.post("/get_mail")
-def read_item(domain: Optional[str] = None):
-    done = fakeEmail(domain)
+def read_item(domain: Optional[str] = None, total: Optional[int] = None):
+    done = fakeEmail(domain, total)
     return done
 
 @app.post("/yahoo_checker")
@@ -150,3 +153,7 @@ def read_item(mail: Optional[str] = None):
     done = valid(mail)
     return done
 
+@app.post("/fake_useragent")
+def read_item():
+    done = user_agent()
+    return done
