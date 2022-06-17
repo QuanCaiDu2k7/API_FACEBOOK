@@ -190,7 +190,7 @@ def get_code(mail):
     except:
         return json.dumps({'error':{'mail': mail, 'status': 'Invalid Email'}})
     
-@app.post("/get_ip")
+@app.get("/get_ip")
 def read_item():
     done = get_ip()
     return done
