@@ -12,13 +12,7 @@ app = FastAPI()
 
 def ip():
     try:
-        headers = Headers(headers=True).generate()['User-Agent']
-        br = mechanize.Browser()
-        br.set_handle_robots(False)
-        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(),max_time=1)
-        br.addheaders = [('User-Agent', headers)]
-        br.open('http://httpbin.org/ip')
-        code = br.response().read().decode('utf-8')
+        code = requests.get('http://httpbin.org/ip')
         return code
     except:
         return json.dumps({'error':{'status': 'Server Error!'}})
