@@ -181,33 +181,32 @@ def get_code(mail):
     except:
         return json.dumps({'error':{'mail': mail, 'status': 'Invalid Email'}})
     
-
-@app.get("/fake_useragent")
+@app.post("/fake_useragent")
 def read_item():
     done = user_agent()
     return done
  
-@app.get("/get_mail")
+@app.post("/get_mail")
 def read_item(domain: Optional[str] = None):
     done = fakeEmail(domain)
     return done
 
-@app.get("/yahoo_checker")
+@app.post("/yahoo_checker")
 def read_item(mail: Optional[str] = None):
     done = check_yahoo(mail)
     return done
 
-@app.get("/hotmail_checker")
+@app.post("/hotmail_checker")
 def read_item(mail: Optional[str] = None):
     done = check_hot(mail)
     return done
 
-@app.get("/valid_facebook")
+@app.post("/valid_facebook")
 def read_item(mail: Optional[str] = None):
     done = valid(mail)
     return done
 
-@app.get("/facebook_code")
+@app.post("/facebook_code")
 def read_item(mail: Optional[str] = None):
     done = get_code(mail)
     return done
