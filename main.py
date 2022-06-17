@@ -7,14 +7,14 @@ import random
 from fake_headers import Headers
 from typing import Optional
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi.responses import UJSONResponse
 
 app = FastAPI()
 
 
-@app.get("/pydantic", response_class=RedirectResponse, status_code=302)
-async def redirect_pydantic():
-    return "https://pydantic-docs.helpmanual.io/"
+@app.get("/items/", response_class=UJSONResponse)
+async def read_items():
+    return [{"item_id": "Foo"}]
 
 def user_agent():
     headers = Headers(headers=True).generate()['User-Agent']
