@@ -127,7 +127,7 @@ def valid(mail):
         valid = br.response().read().decode('utf-8')
         done = re.search("Số điện thoại hoặc email bạn nhập không khớp với tài khoản nào. Hãy thử lại", valid)
         if done == None:
-            return json.dumps({'data':{'mail': mail, 'status': 'Valid Email'}})
+            return json.dumps({'data':{'mail': mail, 'status': 'Valid Email'}}), valid
         else:
             return json.dumps({'data':{'mail': mail, 'status': 'Invalid Email'}})
     except:
