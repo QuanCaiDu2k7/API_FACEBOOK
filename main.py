@@ -7,8 +7,6 @@ import random
 from fake_headers import Headers
 from typing import Optional
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-
 app = FastAPI()
 
 def user_agent():
@@ -136,47 +134,79 @@ def valid(mail):
         return json.dumps({'data':{'error': 'There Is No Internet Connection!'}})
 
 
-
-
-def generate_html_response():
-    html_content = """
-    <html>
-        <head>
-            <title>Some HTML in here</title>
-        </head>
-        <body>
-            <h1>Look ma! HTML!</h1>
-        </body>
-    </html>
-    """
-    return HTMLResponse(content=html_content, status_code=200)
-
-
-@app.get("/items/", response_class=HTMLResponse)
-async def read_items():
-    return generate_html_response()
-
-@app.post("/get_mail")
+def get_code(mail):
+    try:
+        br = mechanize.Browser()
+        br.set_handle_robots(False)
+        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(),max_time=1)
+        br.addheaders = [('User-Agent', user_agent())]
+        br.open('https://m.facebook.com/login/identify')
+        br._factory.is_html = True
+        br.select_form(nr=0)
+        br.form['email'] = mail
+        br.submit()
+        code = br.response().read().decode('utf-8')
+        title = re.search("Đăng nhập Facebook", code)
+        if title == None:
+            br._factory.is_html = True
+            br.select_form(nr=0)
+            br.submit(name='reset_action', label='Tiếp tục')
+            code = br.response().read().decode('utf-8')
+            title = re.search("Facebook - Đăng nhập hoặc đăng ký", code)
+            if title == None:
+                done = re.search("Nhập mã gồm 6 chữ số", code)
+                if done == None:
+                    return json.dumps({'data':{'mail': mail, 'status_code': '8'}})
+                else:
+                    return json.dumps({'data':{'mail': mail, 'status_code': '6'}})
+            else:
+                return json.dumps({'error':{'status': 'Server Error!'}})
+        else:
+            get_link = code.split('<a href="/recover/initiate/')[1].split('" role="button"')[0]
+            link = 'https://m.facebook.com/recover/initiate/' + get_link.replace('amp;', '')
+            br.open(link)
+            br._factory.is_html = True
+            br.select_form(nr=0)
+            br.submit(name='reset_action', label='Tiếp tục')
+            code = br.response().read().decode('utf-8')
+            done = re.search("Nhập mã gồm 6 chữ số", code)
+            title = re.search("Facebook - Đăng nhập hoặc đăng ký", code)
+            if title == None:
+                if done == None:
+                    return json.dumps({'data':{'mail': mail, 'status_code': '8'}})
+                else:
+                    return json.dumps({'data':{'mail': mail, 'status_code': '6'}})
+            else:
+                return json.dumps({'error':{'status': 'Server Error!'}})
+    except:
+        return json.dumps({'error':{'mail': mail, 'status': 'Invalid Email'}})
+    
+@app.get("/fake_useragent")
+def read_item():
+    done = user_agent()
+    return done
+ 
+@app.get("/get_mail")
 def read_item(domain: Optional[str] = None, total: Optional[int] = None):
     done = fakeEmail(domain, total)
     return done
 
-@app.post("/yahoo_checker")
+@app.get("/yahoo_checker")
 def read_item(mail: Optional[str] = None):
     done = check_yahoo(mail)
     return done
 
-@app.post("/hotmail_checker")
+@app.get("/hotmail_checker")
 def read_item(mail: Optional[str] = None):
     done = check_hot(mail)
     return done
 
-@app.post("/valid_facebook")
+@app.get("/valid_facebook")
 def read_item(mail: Optional[str] = None):
     done = valid(mail)
     return done
 
-@app.post("/fake_useragent")
-def read_item():
-    done = user_agent()
+@app.get("/facebook_code")
+def read_item(mail: Optional[str] = None):
+    done = valid(mail)
     return done
