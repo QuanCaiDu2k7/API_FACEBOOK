@@ -9,15 +9,6 @@ from typing import Optional
 from fastapi import FastAPI
 app = FastAPI()
 
-
-def ip():
-    try:
-        code = requests.get('http://httpbin.org/ip')
-        return code
-    except:
-        return json.dumps({'error':{'status': 'Server Error!'}})
-    
-    
 def user_agent():
     headers = Headers(headers=True).generate()['User-Agent']
     return headers
@@ -134,9 +125,9 @@ def valid(mail):
         br.form['email'] = mail
         br.submit()
         valid = br.response().read().decode('utf-8')
-        done = re.search("Số điện thoại hoặc email bạn nhập không khớp với tài khoản nào. Hãy thử lại", valid)
+        done = re.search("你输入的手机号或邮箱没有匹配的帐户", valid)
         if done == None:
-            return json.dumps({'data':{'mail': mail, 'status': 'Valid Email'}}), valid
+            return json.dumps({'data':{'mail': mail, 'status': 'Valid Email'}})
         else:
             return json.dumps({'data':{'mail': mail, 'status': 'Invalid Email'}})
     except:
@@ -190,11 +181,6 @@ def get_code(mail):
     except:
         return json.dumps({'error':{'mail': mail, 'status': 'Invalid Email'}})
     
-@app.get("/get_ip")
-def read_item():
-    done = get_ip()
-    return done
-
 @app.post("/fake_useragent")
 def read_item():
     done = user_agent()
