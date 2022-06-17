@@ -4,3 +4,4 @@ requests==2.27.1
 uvicorn==0.17.6
 Faker==13.13.0
 mechanize==0.4.8
+fake-headers==1.0.2
