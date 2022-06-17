@@ -6,7 +6,6 @@ import json
 import mechanize
 from faker import Faker
 import re
-from fake_headers import Headers
 app = FastAPI()
 
 
