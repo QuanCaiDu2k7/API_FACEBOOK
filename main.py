@@ -7,7 +7,7 @@ import random
 from fake_headers import Headers
 from typing import Optional
 from fastapi import FastAPI
-from fastapi.responses import UJSONResponse
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
@@ -135,7 +135,28 @@ def valid(mail):
     except:
         return json.dumps({'data':{'error': 'There Is No Internet Connection!'}})
 
-@app.post("/get_mail", response_class=UJSONResponse)
+
+
+
+def generate_html_response():
+    html_content = """
+    <html>
+        <head>
+            <title>Some HTML in here</title>
+        </head>
+        <body>
+            <h1>Look ma! HTML!</h1>
+        </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content, status_code=200)
+
+
+@app.get("/items/", response_class=HTMLResponse)
+async def read_items():
+    return generate_html_response()
+
+@app.post("/get_mail")
 def read_item(domain: Optional[str] = None, total: Optional[int] = None):
     done = fakeEmail(domain, total)
     return done
